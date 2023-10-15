@@ -1,7 +1,7 @@
 function addReminder() {
   // CLIST info
-  var userName = "dawndusk29";
-  var apiKey = "23a81fa7e3a3781da4e1aa7653fa9f79f0e6d609";
+  var userName = "";
+  var apiKey = "";
 
   // contests info
   var hosts = ["leetcode.com", "codeforces.com"];
@@ -16,7 +16,7 @@ function addReminder() {
   var maxDuration = 30 * 24 * 60 * 60;
 
   // calendar info
-  var calendarID = "theblackmarch29@gmail.com";
+  var calendarID = "";
   var calendar = CalendarApp.getOwnedCalendarById(calendarID);
 
   // map existing calendar events to the url (description contains the url)
