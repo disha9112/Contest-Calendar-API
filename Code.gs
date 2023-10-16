@@ -1,13 +1,13 @@
 function addReminder() {
   // CLIST info
-  var userName = "";
-  var apiKey = "";
+  var userName = "dawndusk29";
+  var apiKey = "23a81fa7e3a3781da4e1aa7653fa9f79f0e6d609";
 
   // contests info
   var hosts = ["leetcode.com", "codeforces.com"];
 
   // dates and times
-  var minDate = new Date("October 15, 2023 00:00:00 Z");
+  var minDate = new Date("October 16, 2023 00:00:00 Z");
   var maxDate = new Date("October 25, 2023 00:00:00 Z");
   var today = new Date();
   var todayString =
@@ -16,7 +16,7 @@ function addReminder() {
   var maxDuration = 30 * 24 * 60 * 60;
 
   // calendar info
-  var calendarID = "";
+  var calendarID = "theblackmarch29@gmail.com";
   var calendar = CalendarApp.getOwnedCalendarById(calendarID);
 
   // map existing calendar events to the url (description contains the url)
@@ -47,10 +47,11 @@ function addReminder() {
       // all the contests are contained in "objects"
       var contests = responseObj["objects"];
       for (var k in contests) {
+        var contest = contests[k];
         // check if the contest is not added
-        if (mp[contests[k]["href"]] == null) {
-          var start = new Date(contests[k]["start"]);
-          var end = new Date(contests[k]["end"]);
+        if (mp[contest["href"]] == null) {
+          var start = new Date(contest["start"]);
+          var end = new Date(contest["end"]);
           var startTime = start.getTime();
           var endTime = end.getTime();
 
@@ -63,19 +64,44 @@ function addReminder() {
           console.log("Event start time: ", startFinal);
           console.log("Event end time: ", endFinal);
 
-          var e = calendar.createEvent(
-            contests[k]["event"],
-            startFinal,
-            endFinal,
-            {
-              description: contests[k]["href"],
-            }
-          );
+          var e = calendar.createEvent(contest["event"], startFinal, endFinal, {
+            description: contest["href"],
+          });
 
           console.log("New event created: " + e.getTitle());
-          mp[contests[k]["href"]] = e;
+          mp[contest["href"]] = e;
         } else {
-          // do updation of existing event in case its details have changed
+          // new info from API
+          var newContestTitle = contest["event"];
+          var newContestStart = new Date(contest["start"]);
+          var newContestEnd = new Date(contest["end"]);
+          // old info stored in map
+          var e = mp[contest["href"]];
+          var currContestTitle = e.getTitle();
+          var currContestStart = e.getStartTime();
+          var currContestEnd = e.getEndTime();
+
+          // convert date to time (in ms)
+          var milliseconds = (5 * 60 + 30) * 60 * 1000;
+          var newContestStartTime = newContestStart.getTime() + milliseconds;
+          var currContestStartTime = currContestStart.getTime();
+          var newContestEndTime = newContestEnd.getTime() + milliseconds;
+          var currContestEndTime = currContestEnd.getTime();
+
+          if (
+            newContestTitle != currContestTitle ||
+            newContestStartTime != currContestStartTime ||
+            newContestEndTime != currContestEndTime
+          ) {
+            e.setTitle(newContestTitle);
+            e.setTime(
+              new Date(newContestStartTime),
+              new Date(newContestEndTime)
+            );
+            console.log("Event updated: " + e.getTitle());
+          } else {
+            console.log("No changes to event: " + e.getTitle());
+          }
         }
       }
     } catch (err) {
@@ -85,6 +111,4 @@ function addReminder() {
 }
 
 // time-based trigger to automate the fetching of events
-function timeDrivenTrigger() {
-  ScriptApp.newTrigger("addReminder").timeBased().everyHours(1).create();
-}
+ScriptApp.newTrigger("addReminder").timeBased().everyHours(1).create();
