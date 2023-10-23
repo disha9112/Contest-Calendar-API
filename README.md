@@ -1,6 +1,6 @@
 # Contest-Calendar-API
 
-A Chrome extension to streamline your web navigation by shortening lengthy URLs using the [**t.ly API**](https://t.ly/docs).
+A script to add upcoming contests to your Google Calendar, made using the CLIST API and Apps Script. It currently supports the correct fetching and storage of LeetCode and Codeforces contest events.
 
 ## Getting Started
 
