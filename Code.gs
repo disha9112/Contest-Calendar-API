@@ -7,12 +7,14 @@ function addReminder() {
   var hosts = ["leetcode.com", "codeforces.com"];
 
   // dates and times
-  var minDate = new Date("October 16, 2023 00:00:00 Z");
-  var maxDate = new Date("October 25, 2023 00:00:00 Z");
-  var today = new Date();
-  var todayString =
-    Utilities.formatDate(today, "GMT", "yyyy-MM-dd") + "T00:00:00Z";
-  // a contest will stay up for at max 30 days
+  var milliseconds = (5 * 60 + 30) * 60 * 1000;
+  var minDate = new Date("October 22, 2023 00:00:00 Z");
+  var maxDate = new Date("November 5, 2023 00:00:00 Z");
+  var minString =
+    Utilities.formatDate(minDate, "GMT", "yyyy-MM-dd") + "T00:00:00Z";
+  var maxString =
+    Utilities.formatDate(maxDate, "GMT", "yyyy-MM-dd") + "T00:00:00Z";
+  // a contest can stay up for max 30 days
   var maxDuration = 30 * 24 * 60 * 60;
 
   // calendar info
@@ -23,7 +25,8 @@ function addReminder() {
   var mp = {};
   var events = calendar.getEvents(minDate, maxDate);
   for (i = 0; i < events.length; i++) {
-    mp[events[i].getDescription()] = events[i];
+    var contestUrl = events[i].getDescription();
+    mp[contestUrl] = events[i];
   }
 
   // add a contest if it doesn't exist in the map
@@ -38,7 +41,9 @@ function addReminder() {
           "&resource__name=" +
           hosts[j] +
           "&start__gte=" +
-          todayString +
+          minString +
+          "&end__lte=" +
+          maxString +
           "&order_by=start&duration__lte=" +
           maxDuration
       );
@@ -56,7 +61,6 @@ function addReminder() {
           var endTime = end.getTime();
 
           // IST timezone conversion
-          var milliseconds = (5 * 60 + 30) * 60 * 1000;
           var startTimeIST = startTime + milliseconds;
           var endTimeIST = endTime + milliseconds;
           var startFinal = new Date(startTimeIST);
@@ -82,7 +86,6 @@ function addReminder() {
           var currContestEnd = e.getEndTime();
 
           // convert date to time (in ms)
-          var milliseconds = (5 * 60 + 30) * 60 * 1000;
           var newContestStartTime = newContestStart.getTime() + milliseconds;
           var currContestStartTime = currContestStart.getTime();
           var newContestEndTime = newContestEnd.getTime() + milliseconds;
@@ -111,4 +114,4 @@ function addReminder() {
 }
 
 // time-based trigger to automate the fetching of events
-ScriptApp.newTrigger("addReminder").timeBased().everyHours(1).create();
+// ScriptApp.newTrigger("addReminder").timeBased().everyHours(1).create();
